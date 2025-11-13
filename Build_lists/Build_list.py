@@ -21,8 +21,5 @@ class Build():
         dataset_id_list = np.asarray(c['dataset_ID'])
         case_id_list = np.asarray(c['case_ID'])
         image_folder_list = np.asarray(c['image_folder'])
-
-    
-
         
         return batch_list, dataset_id_list, case_id_list, image_folder_list

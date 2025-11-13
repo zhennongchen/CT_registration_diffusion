@@ -9,7 +9,7 @@ from skimage.measure import block_reduce
 
 import torch
 from torch.utils.data import Dataset
-import Diffusion_denoising_thin_slice.Data_processing as Data_processing
+import CT_registration.Data_processing as Data_processing
 import Diffusion_denoising_thin_slice.functions_collection as ff
 
 
