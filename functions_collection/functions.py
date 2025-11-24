@@ -3,6 +3,7 @@ import glob
 import os
 import math
 import random
+from PIL import Image
 
 # function: set window level
 def set_window(image,level,width):
