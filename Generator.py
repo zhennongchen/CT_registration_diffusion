@@ -50,7 +50,10 @@ class Dataset_4DCT(Dataset):
     def __init__(
         self,
         image_folder_list,
-        image_size = [256,256,128], # target image size after center-crop
+        image_size = [224,224,96], # target image size after center-crop
+
+        num_of_pairs_each_case = 1, # number of image pairs to be sampled from each 4DCT case
+        preset_paired_tf = None, # preset paired time frames if needed, e.g., [[0,3],[1,2]], otherwise randomly pick two time frames
 
         cutoff_range = [-200,250], # default cutoff range for CT images
         normalize_factor = 'equatoin',
@@ -63,6 +66,11 @@ class Dataset_4DCT(Dataset):
         super().__init__()
         self.image_folder_list = image_folder_list
         self.image_size = image_size
+
+        self.num_of_pairs_each_case = num_of_pairs_each_case
+        self.preset_paired_tf = preset_paired_tf
+        if self.preset_paired_tf is not None:
+            assert self.num_of_pairs_each_case == len(self.preset_paired_tf)
        
         self.background_cutoff = cutoff_range[0]
         self.maximum_cutoff = cutoff_range[1]
@@ -85,16 +93,21 @@ class Dataset_4DCT(Dataset):
         np.random.seed()
         index_array = []
         
+        # loop through all files
         if self.shuffle == True:
             f_list = np.random.permutation(self.num_files)
         else:
             f_list = np.arange(self.num_files)
-
-        index_array = [[f] for f in f_list]
+        
+        for f in f_list:
+            # loop through all pairs in each file 
+            for p in range(self.num_of_pairs_each_case):
+                index_array.append([f,p])
+      
         return index_array
 
     def __len__(self):
-       return self.num_files
+       return self.num_files * self.num_of_pairs_each_case
     
     def load_data(self, file_path):
         image = nb.load(file_path).get_fdata()
@@ -102,15 +115,20 @@ class Dataset_4DCT(Dataset):
 
   
     def __getitem__(self, index):
-        file_num = self.index_array[index]
-        current_image_folder = self.image_folder_list[file_num][0]
+        file_index, pair_index = self.index_array[index]
+        current_image_folder = self.image_folder_list[file_index]
         
-        # randomly pick two time frames
+        # randomly pick two time frames or using preset paired time frames
         timeframes = ff.find_all_target_files(['img*'], current_image_folder)
-        t1, t2 = np.random.choice(len(timeframes), size=2, replace=False)
+        if self.preset_paired_tf is not None:
+            t1, t2 = self.preset_paired_tf[pair_index]
+            print('这里的time frame配对是预设的,不是随机选取的, pick time frames:', t1, t2)
+        else:
+            t1, t2 = np.random.choice(len(timeframes), size=2, replace=False)
+            print('这里的time frame配对是随机选取的, pick time frames:', t1, t2)
         moving_file = timeframes[t1]
         fixed_file = timeframes[t2]
-        # print('in this folder, I pick moving file:', moving_file, ' fixed file:', fixed_file)
+        print('in this folder, I pick moving file:', moving_file, ' fixed file:', fixed_file)
 
         # load image
         moving_image = self.load_data(moving_file)
