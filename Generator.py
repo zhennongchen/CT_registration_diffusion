@@ -54,6 +54,7 @@ class Dataset_4DCT(Dataset):
 
         num_of_pairs_each_case = 1, # number of image pairs to be sampled from each 4DCT case
         preset_paired_tf = None, # preset paired time frames if needed, e.g., [[0,3],[1,2]], otherwise randomly pick two time frames
+        only_use_tf0_as_moving = None, # if set True, only use time frame 0 as moving image, otherwise randomly select moving time frame
 
         cutoff_range = [-200,250], # default cutoff range for CT images
         normalize_factor = 'equatoin',
@@ -71,6 +72,7 @@ class Dataset_4DCT(Dataset):
         self.preset_paired_tf = preset_paired_tf
         if self.preset_paired_tf is not None:
             assert self.num_of_pairs_each_case == len(self.preset_paired_tf)
+        self.only_use_tf0_as_moving = only_use_tf0_as_moving; assert self.only_use_tf0_as_moving in [True, False]
        
         self.background_cutoff = cutoff_range[0]
         self.maximum_cutoff = cutoff_range[1]
@@ -123,8 +125,14 @@ class Dataset_4DCT(Dataset):
         if self.preset_paired_tf is not None:
             t1, t2 = self.preset_paired_tf[pair_index]
             print('这里的time frame配对是预设的,不是随机选取的, pick time frames:', t1, t2)
+            if self.only_use_tf0_as_moving == True:
+                assert t1 == 0, 'when only_use_tf0_as_moving is set True, the preset paired time frames must have time frame 0 as moving image'
         else:
-            t1, t2 = np.random.choice(len(timeframes), size=2, replace=False)
+            if self.only_use_tf0_as_moving == True:
+                t1 = 0
+                t2 = np.random.choice([i for i in range(len(timeframes)) if i != t1])
+            else:
+                t1, t2 = np.random.choice(len(timeframes), size=2, replace=False)
             print('这里的time frame配对是随机选取的, pick time frames:', t1, t2)
         moving_file = timeframes[t1]
         fixed_file = timeframes[t2]

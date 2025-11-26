@@ -39,31 +39,7 @@ import CT_registration_diffusion.functions_collection as ff
 import CT_registration_diffusion.Data_processing as Data_processing
 import CT_registration_diffusion.model.spatial_transform as spatial_transform
 import CT_registration_diffusion.model.loss as my_loss
-
-def exists(x):
-    return x is not None
-
-def default(val, d):
-    if exists(val): 
-        return val
-    return d() if callable(d) else d
-
-def cast_tuple(t, length = 1):
-    if isinstance(t, tuple):
-        return t
-    return ((t,) * length)
-
-def divisible_by(numer, denom):
-    return (numer % denom) == 0
-
-def identity(t, *args, **kwargs):
-    return t
-
-def cycle(dl):
-    while True:
-        for data in dl:
-            yield data
-
+import CT_registration_diffusion.model.model as model
 
 
 class Trainer(object):
@@ -104,7 +80,7 @@ class Trainer(object):
 
         # model
         self.model = model  
-        self.similarity_metric = nn.MSELoss()  #### Luxin: change, write this part in loss.py, and call here using my_loss.SimilarityLoss()
+        self.similarity_metric = my_loss.NCCLoss()
         self.regularization_metric = my_loss.GradSmoothLoss() 
         self.regularization_weight = regularization_weight
 
@@ -159,7 +135,7 @@ class Trainer(object):
             'opt': self.opt.state_dict(),
             'ema': self.ema.state_dict(),
             'decay_steps': self.scheduler.state_dict(),
-            'scaler': self.accelerator.scaler.state_dict() if exists(self.accelerator.scaler) else None,
+            'scaler': self.accelerator.scaler.state_dict() if model.exists(self.accelerator.scaler) else None,
         }
         
         torch.save(data, os.path.join(self.results_folder, 'model-' + str(stepNum) + '.pt'))
@@ -181,7 +157,7 @@ class Trainer(object):
 
         self.scheduler.load_state_dict(data['decay_steps'])
 
-        if exists(self.accelerator.scaler) and exists(data['scaler']):
+        if model.exists(self.accelerator.scaler) and model.exists(data['scaler']):
             self.accelerator.scaler.load_state_dict(data['scaler'])
 
 
@@ -254,16 +230,16 @@ class Trainer(object):
                 self.step += 1
 
                 # save the model
-                if self.step !=0 and divisible_by(self.step, self.save_model_every):
+                if self.step !=0 and model.divisible_by(self.step, self.save_model_every):
                    self.save(self.step)
                 
-                if self.step !=0 and divisible_by(self.step, self.train_lr_decay_every):
+                if self.step !=0 and model.divisible_by(self.step, self.train_lr_decay_every):
                     self.scheduler.step()
                     
                 self.ema.update()
 
                 # do the validation if necessary
-                if self.step !=0 and divisible_by(self.step, self.validation_every):
+                if self.step !=0 and model.divisible_by(self.step, self.validation_every):
                     print('validation at step: ', self.step)
                     self.model.eval()
                     with torch.no_grad():
