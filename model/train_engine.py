@@ -39,7 +39,7 @@ import CT_registration_diffusion.functions_collection as ff
 import CT_registration_diffusion.Data_processing as Data_processing
 import CT_registration_diffusion.model.spatial_transform as spatial_transform
 import CT_registration_diffusion.model.loss as my_loss
-import CT_registration_diffusion.model.model as model
+import CT_registration_diffusion.model.model as my_model
 
 
 class Trainer(object):
@@ -158,7 +158,7 @@ class Trainer(object):
 
         self.scheduler.load_state_dict(data['decay_steps'])
 
-        if model.exists(self.accelerator.scaler) and model.exists(data['scaler']):
+        if my_model.exists(self.accelerator.scaler) and my_model.exists(data['scaler']):
             self.accelerator.scaler.load_state_dict(data['scaler'])
 
 
@@ -231,16 +231,16 @@ class Trainer(object):
                 self.step += 1
 
                 # save the model
-                if self.step !=0 and model.divisible_by(self.step, self.save_model_every):
+                if self.step !=0 and my_model.divisible_by(self.step, self.save_model_every):
                    self.save(self.step)
                 
-                if self.step !=0 and model.divisible_by(self.step, self.train_lr_decay_every):
+                if self.step !=0 and my_model.divisible_by(self.step, self.train_lr_decay_every):
                     self.scheduler.step()
                     
                 self.ema.update()
 
                 # do the validation if necessary
-                if self.step !=0 and model.divisible_by(self.step, self.validation_every):
+                if self.step !=0 and my_model.divisible_by(self.step, self.validation_every):
                     print('validation at step: ', self.step)
                     self.model.eval()
                     with torch.no_grad():

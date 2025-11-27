@@ -36,7 +36,7 @@ from accelerate import Accelerator
 
 import CT_registration_diffusion.functions_collection as ff
 import CT_registration_diffusion.Data_processing as Data_processing
-import CT_registration_diffusion.model.model as model
+import CT_registration_diffusion.model.model as my_model
 import CT_registration_diffusion.model.spatial_transform as spatial_transform
 
 
