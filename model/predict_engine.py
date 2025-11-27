@@ -107,34 +107,3 @@ class Predictor(object):
                 
             return pred_MVF, pred_MVF_numpy, warped_moving_image_numpy
         
-    
-        
-    #     background_cutoff = self.background_cutoff; maximum_cutoff = self.maximum_cutoff; normalize_factor = self.normalize_factor
-    #     self.load_model(trained_model_filename) 
-        
-    #     device = self.device
-
-    #     self.ema.ema_model.eval()
-    #     # check whether model is on GPU:
-    #     print('model device: ', next(self.ema.ema_model.parameters()).device)
-
-    #     pred_img = np.zeros((self.image_size[0], self.image_size[1], reference_img.shape[-1]), dtype = np.float32)
-
-    #     # start to run
-    #     with torch.inference_mode():
-    #         print('gt_img shape: ', reference_img.shape)
-    #         for z_slice in range(0,reference_img.shape[-1]):
-    #             batch_input, batch_gt = next(self.cycle_dl)
-    #             data_input = batch_input.to(device)
-                            
-    #             pred_img_slice = self.ema.ema_model(data_input)
-    #             pred_img_slice = pred_img_slice.detach().cpu().numpy().squeeze()
-    #             # print('pred_img_slice shape: ', pred_img_slice.shape)
-    #             pred_img[:,:,z_slice] = pred_img_slice
-
-        
-    #     pred_img = Data_processing.crop_or_pad(pred_img, [reference_img.shape[0], reference_img.shape[1],reference_img.shape[-1]], value = np.min(reference_img))
-    #     pred_img = Data_processing.normalize_image(pred_img, normalize_factor = normalize_factor, image_max = maximum_cutoff, image_min = background_cutoff, invert = True)
-    #     pred_img = Data_processing.correct_shift_caused_in_pad_crop_loop(pred_img)
-      
-    #     return pred_img
