@@ -124,7 +124,7 @@ class Dataset_4DCT(Dataset):
         timeframes = ff.find_all_target_files(['img*'], current_image_folder)
         if self.preset_paired_tf is not None:
             t1, t2 = self.preset_paired_tf[pair_index]
-            print('这里的time frame配对是预设的,不是随机选取的, pick time frames:', t1, t2)
+            # print('这里的time frame配对是预设的,不是随机选取的, pick time frames:', t1, t2)
             if self.only_use_tf0_as_moving == True:
                 assert t1 == 0, 'when only_use_tf0_as_moving is set True, the preset paired time frames must have time frame 0 as moving image'
         else:
@@ -133,10 +133,10 @@ class Dataset_4DCT(Dataset):
                 t2 = np.random.choice([i for i in range(len(timeframes)) if i != t1])
             else:
                 t1, t2 = np.random.choice(len(timeframes), size=2, replace=False)
-            print('这里的time frame配对是随机选取的, pick time frames:', t1, t2)
+            # print('这里的time frame配对是随机选取的, pick time frames:', t1, t2)
         moving_file = timeframes[t1]
         fixed_file = timeframes[t2]
-        print('in this folder, I pick moving file:', moving_file, ' fixed file:', fixed_file)
+        # print('in this folder, I pick moving file:', moving_file, ' fixed file:', fixed_file)
 
         # load image
         moving_image = self.load_data(moving_file)
@@ -182,7 +182,6 @@ class Dataset_4DCT(Dataset):
         return moving_image, fixed_image
     
     def on_epoch_end(self):
-        print('now run on_epoch_end function')
         self.index_array = self.generate_index_array()
     
 

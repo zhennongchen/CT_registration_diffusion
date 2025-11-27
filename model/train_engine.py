@@ -80,7 +80,8 @@ class Trainer(object):
 
         # model
         self.model = model  
-        self.similarity_metric = my_loss.NCCLoss()
+        # put MSE loss
+        self.similarity_metric = nn.MSELoss()
         self.regularization_metric = my_loss.GradSmoothLoss() 
         self.regularization_weight = regularization_weight
 
