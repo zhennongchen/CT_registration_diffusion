@@ -136,7 +136,7 @@ class Trainer(object):
             'opt': self.opt.state_dict(),
             'ema': self.ema.state_dict(),
             'decay_steps': self.scheduler.state_dict(),
-            'scaler': self.accelerator.scaler.state_dict() if model.exists(self.accelerator.scaler) else None,
+            'scaler': self.accelerator.scaler.state_dict() if my_model.exists(self.accelerator.scaler) else None,
         }
         
         torch.save(data, os.path.join(self.results_folder, 'model-' + str(stepNum) + '.pt'))

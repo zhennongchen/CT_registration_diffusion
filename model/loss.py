@@ -15,7 +15,7 @@ class GradSmoothLoss(nn.Module):
         dy = torch.abs(MVF[:, :, :, 1:, :] - MVF[:, :, :, :-1, :])
         dz = torch.abs(MVF[:, :, :, :, 1:] - MVF[:, :, :, :, :-1])
 
-        loss = (dx * dx).mean() + (dy * dy).mean() + (dz * dz).mean()
+        loss = (dx.mean() + dy.mean() + dz.mean()) / 3
         return loss
     
 

@@ -17,7 +17,7 @@ import CT_registration_diffusion.Data_processing as Data_processing
 
 # define augmentation functions here if needed
 # random functionf
-def random_rotate(i, z_rotate_degree = None, z_rotate_range = [-10,10], fill_val = None, order = 1):
+def random_rotate(i, z_rotate_degree = None, z_rotate_range = [-5,5], fill_val = None, order = 1):
     # only do rotate according to z (in-plane rotation)
     if z_rotate_degree is None:
         z_rotate_degree = random.uniform(z_rotate_range[0], z_rotate_range[1])
@@ -33,7 +33,7 @@ def random_rotate(i, z_rotate_degree = None, z_rotate_range = [-10,10], fill_val
         else:
             return Data_processing.rotate_image(np.copy(i), [0,0,z_rotate_degree], order = order, fill_val = fill_val, ), z_rotate_degree
 
-def random_translate(i, x_translate = None,  y_translate = None, translate_range = [-10,10]):
+def random_translate(i, x_translate = None,  y_translate = None, translate_range = [-5,5]):
     # only do translate according to x and y
     if x_translate is None or y_translate is None:
         x_translate = int(random.uniform(translate_range[0], translate_range[1]))
