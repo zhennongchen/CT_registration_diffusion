@@ -50,6 +50,7 @@ class Trainer(object):
         generator_val,
         train_batch_size,
         regularization_weight,
+        similarity_metric,
 
         *,
         accum_iter = 1, # gradient accumulation steps
@@ -81,7 +82,11 @@ class Trainer(object):
         # model
         self.model = model  
         # put MSE loss
-        self.similarity_metric = nn.MSELoss()
+        assert similarity_metric in ['MSE','NCC'], "similarity_metric should be either 'MSE' or 'NCC'"
+        if similarity_metric == 'NCC':
+            self.similarity_metric = my_loss.NCCLoss()
+        else:
+            self.similarity_metric = nn.MSELoss()
         self.regularization_metric = my_loss.GradSmoothLoss() 
         self.regularization_weight = regularization_weight
 
@@ -206,7 +211,7 @@ class Trainer(object):
                         warped_moving = spatial_transform.warp_from_mvf(data_moving, output_MVF)
                         
                         # loss
-                        similarity_loss = self.similarity_metric(warped_moving, data_fixed)
+                        similarity_loss = self.similarity_metric(data_fixed, warped_moving)
                         regularization_loss = self.regularization_metric(output_MVF)
                         loss = similarity_loss + self.regularization_weight * regularization_loss
                         
@@ -260,7 +265,7 @@ class Trainer(object):
                                 warped_moving = spatial_transform.warp_from_mvf(data_moving, output_MVF)
                                 
                                 # loss
-                                similarity_loss = self.similarity_metric(warped_moving, data_fixed)
+                                similarity_loss = self.similarity_metric(data_fixed, warped_moving)
                                 regularization_loss = self.regularization_metric(output_MVF)
                                 loss = similarity_loss + self.regularization_weight * regularization_loss
 

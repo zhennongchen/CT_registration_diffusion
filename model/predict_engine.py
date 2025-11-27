@@ -102,7 +102,7 @@ class Predictor(object):
                 warped_moving_image_numpy = warped_moving_image.detach().cpu().numpy().squeeze()
 
                 # de-normalize the warped image
-                warped_moving_image_numpy = Data_processing.normalize_image(warped_moving_image_numpy, normalize_factor =self.generator.normalize_factor, image_max = self.generator.maximum_cutoff, image_min = self.generator.background_cutoff, invert = True)
+                warped_moving_image_numpy = Data_processing.normalize_image(warped_moving_image_numpy, normalize_factor =self.generator.normalize_factor, image_max = self.generator.maximum_cutoff, image_min = self.generator.background_cutoff, invert = True, final_max = 1, final_min = 0)
 
                 
             return pred_MVF, pred_MVF_numpy, warped_moving_image_numpy

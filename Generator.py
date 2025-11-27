@@ -158,8 +158,8 @@ class Dataset_4DCT(Dataset):
             fixed_image = Data_processing.cutoff_intensity(fixed_image, self.background_cutoff, self.maximum_cutoff)
       
         # normalization to [-1,1]
-        moving_image = Data_processing.normalize_image(moving_image, normalize_factor = self.normalize_factor, image_max = self.maximum_cutoff, image_min = self.background_cutoff ,invert = False)
-        fixed_image = Data_processing.normalize_image(fixed_image, normalize_factor = self.normalize_factor, image_max = self.maximum_cutoff, image_min = self.background_cutoff ,invert = False)
+        moving_image = Data_processing.normalize_image(moving_image, normalize_factor = self.normalize_factor, image_max = self.maximum_cutoff, image_min = self.background_cutoff ,invert = False,final_max = 1, final_min = 0)
+        fixed_image = Data_processing.normalize_image(fixed_image, normalize_factor = self.normalize_factor, image_max = self.maximum_cutoff, image_min = self.background_cutoff ,invert = False,final_max = 1, final_min = 0)
         # print('after cutoff and normalization, image range:', np.min(moving_image), np.max(moving_image))
         
         # augmentation if needed
