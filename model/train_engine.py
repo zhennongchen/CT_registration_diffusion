@@ -119,7 +119,7 @@ class Trainer(object):
 
         self.results_folder = results_folder
     
-        ff.make_folder([self.results_folder])
+        # ff.make_folder([self.results_folder])
 
         # step counter state
         self.step = 0

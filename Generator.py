@@ -136,7 +136,7 @@ class Dataset_4DCT(Dataset):
             # print('这里的time frame配对是随机选取的, pick time frames:', t1, t2)
         moving_file = timeframes[t1]
         fixed_file = timeframes[t2]
-        # print('in this folder, I pick moving file:', moving_file, ' fixed file:', fixed_file)
+        print('in this folder, I pick moving file:', moving_file, ' fixed file:', fixed_file)
 
         # load image
         moving_image = self.load_data(moving_file)
